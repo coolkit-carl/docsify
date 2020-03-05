@@ -86,6 +86,28 @@ function renderNameLink(vm) {
   }
 }
 
+function renderName(vm) {
+  const el = dom.getNode('.app-name-link');
+  const name = vm.config.name;
+  const path = vm.route.path;
+
+  if (!el) {
+    return;
+  }
+
+  if (isPrimitive(vm.config.name)) {
+    el.innerText = name;
+    title = name; // Web page title updates with language
+  } else if (typeof name === 'object') {
+    const match = Object.keys(name).filter(
+      key => path.indexOf(key) > -1
+    )[0];
+
+    el.innerText = name[match];
+    title = name[match];
+  }
+}
+
 export function renderMixin(proto) {
   proto._renderTo = function(el, content, replace) {
     const node = dom.getNode(el);
@@ -229,6 +251,8 @@ export function renderMixin(proto) {
   proto._updateRender = function() {
     // Render name link
     renderNameLink(this);
+    // Render name
+    renderName(this);
   };
 }
 
